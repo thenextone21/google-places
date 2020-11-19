@@ -1,0 +1,30 @@
+function locId(text) {
+  var API_KEY = 'APIKEY';
+  var baseUrl = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json';
+  var queryUrl = baseUrl + '?input=' + text + '&inputtype=textquery&key=' + API_KEY;
+  var response = UrlFetchApp.fetch(queryUrl);
+  var json = response.getContentText();
+  var placeId = JSON.parse(json);
+  return placeId.candidates[0].place_id;
+}
+
+function GET_DETAILS(id) {
+  var API_KEY = 'APIKEY';
+  var fields = 'name,formatted_phone_number,formatted_address,type';
+  var baseUrl = 'https://maps.googleapis.com/maps/api/place/details/json?placeid=';
+  var queryUrl = baseUrl + id + '&fields=' + fields + '&key='+ API_KEY;
+
+  if (id == '') {
+    return 'Give me a Google Places URL...';
+  }
+
+  var response = UrlFetchApp.fetch(queryUrl);
+  var json = response.getContentText();
+  var place = JSON.parse(json).result;
+
+  return [[ place.name,
+            place.formatted_phone_number,
+            place.formatted_address,
+            place.type
+          ]];
+}
